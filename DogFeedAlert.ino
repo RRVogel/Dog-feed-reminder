@@ -21,7 +21,7 @@ CRGB leds[NUM_LEDS];
 void setup() {
   //Uncomment to set time
   //if(rtc.lostPower()) rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  
+
   rtc.begin();
   rtc.disableAlarm(1);
   rtc.disableAlarm(2);
@@ -32,7 +32,7 @@ void setup() {
   FastLED.addLeds<WS2812, LED_PIN, RGB>(leds, NUM_LEDS);
   pinMode(alarmPin, INPUT_PULLUP);
   pinMode(tiltPin, INPUT_PULLUP);
-  
+
   //Blink Violet to show working
   leds[0] = CRGB(255, 0, 255);
   FastLED.show();
@@ -60,8 +60,14 @@ void loop() {
     BlinkGreen();
     rtc.disableAlarm(1);
     nowTime = rtc.now();
-    rtc.setAlarm2(nowTime + TimeSpan(0, 7, 0, 0), DS3231_A2_Hour);
-    
+
+    if (nowTime.hour() >= 16) {
+      rtc.setAlarm2(nowTime + TimeSpan(0, 11, 0, 0), DS3231_A2_Hour);
+    }
+    else {
+     rtc.setAlarm2(nowTime + TimeSpan(0, 7, 0, 0), DS3231_A2_Hour); 
+    }
+
     GoToSleep();
     detachInterrupt (digitalPinToInterrupt(alarmPin));
     fedFlag = false;
@@ -72,43 +78,43 @@ void loop() {
 
     nowTime = rtc.now();
     rtc.setAlarm1(nowTime + TimeSpan(0, 0, 0, 15), DS3231_A1_Second);
-    
+
     attachInterrupt (digitalPinToInterrupt(tiltPin), tilt_ISR, LOW);
     GoToSleep();
     detachInterrupt (digitalPinToInterrupt(alarmPin));
 
-  if (tiltFlag) {
-    delay(50);
-    for (int i = 0; i < 50; i++) {
-      Tilt = digitalRead(tiltPin) + Tilt;
-      delay(2);
-      
+    if (tiltFlag) {
+      delay(50);
+      for (int i = 0; i < 50; i++) {
+        Tilt = digitalRead(tiltPin) + Tilt;
+        delay(2);
+
+      }
+      if (Tilt > 40) {
+
+        BlinkGreen();
+        CheckVBat();
+        if (VBat < 3.7) LowBat();
+
+        nowTime = rtc.now();
+        rtc.setAlarm1(nowTime + TimeSpan(0, 0, 0, 30), DS3231_A1_Second);
+        GoToSleep();
+        detachInterrupt (digitalPinToInterrupt(alarmPin));
+        CheckVBat();
+        if (VBat < 3.7) LowBat();
+        BlinkGreen();
+        tiltFlag = false;
+        fedFlag = true;
+
+
+      }
+      else {
+        tiltFlag = false;
+        attachInterrupt (digitalPinToInterrupt(tiltPin), tilt_ISR, LOW);
+      }
+
     }
-    if (Tilt > 40) {
-
-      BlinkGreen();
-      CheckVBat();
-      if (VBat < 3.7) LowBat();
-
-      nowTime = rtc.now();
-      rtc.setAlarm1(nowTime + TimeSpan(0, 0, 0, 30), DS3231_A1_Second);
-      GoToSleep();
-      detachInterrupt (digitalPinToInterrupt(alarmPin));
-      CheckVBat();
-      if (VBat < 3.7) LowBat();
-      BlinkGreen();
-      tiltFlag = false;
-      fedFlag = true;
-
-
-    }
-    else {
-      tiltFlag = false;
-      attachInterrupt (digitalPinToInterrupt(tiltPin), tilt_ISR, LOW);
-    }
-
   }
-}
 
 }
 //==============
