@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: YYYY Rick Vogel for Adafruit Industries
+//
+// SPDX-License-Identifier: MIT
+
 #include <avr/sleep.h>
 #include <RTClib.h>
 #include <FastLED.h>
