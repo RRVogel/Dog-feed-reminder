@@ -11,13 +11,13 @@
 #define alarmPin 3
 #define tiltPin 2
 #define VBATPIN A6
-
+#define piezoPin 11
 float VBat;
 int Tilt;
 bool fedFlag = true;
 volatile bool tiltFlag;
-uint8_t piezoPin = 11;
 static byte prevADCSRA;
+
 RTC_DS3231 rtc;
 DateTime nowTime = rtc.now;
 CRGB leds[NUM_LEDS];
