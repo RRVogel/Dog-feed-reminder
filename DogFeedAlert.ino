@@ -33,7 +33,7 @@ void setup() {
   rtc.clearAlarm(2);
   rtc.writeSqwPinMode(DS3231_OFF); // Place SQW pin into alarm interrupt mode
   rtc.disable32K();
-  FastLED.addLeds<WS2812, LED_PIN, RGB>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
   pinMode(alarmPin, INPUT_PULLUP);
   pinMode(tiltPin, INPUT_PULLUP);
 
